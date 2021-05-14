@@ -2,8 +2,9 @@
 
 import sys, getopt, os, subprocess
 
-def main(argv):
-    helpMsg = "mkDjangoProj.py takes a project name and makes a venv. installs django, and makes a project for you.  \n mkDjangoProj.py -p <project name> \n mkDjangoProj.py --project <project name> "
+def mkDjangoProject(argv):
+    #known issue - This script does *not* care about the number of arguments.  I should fix that.
+    helpMsg = "mkDjangoProj.py takes a project name and makes a project directory, a venv, installs django, and makes a django project for you.  \n USAGE: \n mkDjangoProj.py -p <project name> \n mkDjangoProj.py --project <project name> "
 
     project = ''
 
@@ -43,17 +44,15 @@ def main(argv):
         exit(5)
 
     if project != '' and ' ' not in project:
+        print("Setting up virtual environment " + project + "-venv")
         subprocess.run(["python3", "-m", "venv", project + "-venv"])
-
-#   eep!  source isn't a "command", it's built into bash! D'oh!
-#    subprocess.run(["source", "venv/bin/activate"])
-#    subprocess.run(["pip", "install", "django"])
-#   welp! if we don't use os.system to run the django-admin, it fails!
-#   This is because the venv we activated earlier gets yeeted into the void
-#    subprocess.run(["django-admin", "startproject", project])
+        print("Successfully set up virtual environment")
+        #using os.system because source doesn't work with subprocess
+        print("Setting up Django in the virtual environment")
         os.system ("source " + project + "-venv/bin/activate; pip install django; django-admin startproject "+ project)
 
-        print("All Done!  Work on your project by: \n 1) cd " + project + "-project \n 2) source " + project + "-venv/bin/activate")
+        print("\nAll Done!  Work on your project by: \n 1) cd " + project + "-project \n 2) source " + project + "-venv/bin/activate")
     
+
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    mkDjangoProject(sys.argv[1:])
